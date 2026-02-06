@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Game Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 1000;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        nav {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        header {
+            padding: 120px 0 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .eyebrow {
+            color: #888;
+            font-size: 0.95em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -0.02em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.3em;
+            color: #888;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .projects-grid {
+            padding: 60px 0 120px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .project-card {
+            background: #111;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, #a8edea40, #fed6e340);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: #222;
+        }
+
+        .project-media {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .media-placeholder {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: #444;
+        }
+
+        .media-placeholder svg {
+            width: 80px;
+            height: 80px;
+            opacity: 0.3;
+        }
+
+        .project-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card:hover .project-media img {
+            transform: scale(1.05);
+        }
+
+        .project-content {
+            padding: 50px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            gap: 30px;
+        }
+
+        .project-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .project-year {
+            color: #666;
+            font-size: 0.9em;
+            white-space: nowrap;
+            padding-top: 8px;
+        }
+
+        .project-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #888;
+            margin-bottom: 40px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin: 40px 0;
+            padding: 40px 0;
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .info-section h3 {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #ccc;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: #222;
+            border-color: #333;
+            color: #fff;
+        }
+
+        .learned-section {
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+
+        .learned-section h3 {
+            font-size: 1.3em;
+            margin-bottom: 18px;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .learned-section p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #999;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .btn-secondary:hover {
+            background: #1a1a1a;
+            border-color: #444;
+        }
+
+        footer {
+            padding: 60px 0;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            header {
+                padding: 60px 0 40px;
+            }
+
+            .project-content {
+                padding: 30px 25px;
+            }
+
+            .project-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .learned-section {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="cursor-dot" id="cursor"></div>
+
+    <div class="container">
+        <nav>
+            <div class="logo">YN</div>
+            <ul class="nav-links">
+                <li><a href="#work">Work</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <header>
+            <div class="hero-content">
+                <div class="eyebrow">Game Developer & Creative Technologist</div>
+                <h1>
+                    Crafting <span class="gradient-text">immersive</span> digital experiences
+                </h1>
+                <p class="hero-description">
+                    Specialized in game development, interactive design, and bringing creative visions to life through code.
+                </p>
+            </div>
+        </header>
+
+        <section class="projects-grid" id="work">
+            <div class="project-card">
+                <div class="project-media">
+                    <div class="media-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <path d="M21 15l-5-5L5 21"/>
+                        </svg>
+                        <span>Add Screenshot or GIF</span>
+                    </div>
+                    <!-- <img src="your-flappy-bird-screenshot.png" alt="Flappy Bird Clone"> -->
+                </div>
+
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2 class="project-title">Flappy Bird Clone</h2>
+                        <div class="project-year">2025</div>
+                    </div>
+
+                    <p class="project-description">
+                        A recreation of the classic Flappy Bird game built in Unity. The game features physics-based movement, procedural obstacle spawning, collision detection, and responsive controls. This project demonstrates understanding of game loop structure, gameplay logic, and user input handling. This is my first published Unity project and part of a growing game development portfolio.
+                    </p>
+
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <h3>Core Skills</h3>
+                            <div class="tag-list">
+                                <span class="tag">Unity Engine</span>
+                                <span class="tag">C# Programming</span>
+                                <span class="tag">Game Physics (Unity Rigidbody)</span>
+                                <span class="tag">Collision Detection</span>
+                                <span class="tag">Game Loop Logic</span>
+                                <span class="tag">Scene Management</span>
+                                <span class="tag">UI and Input Handling</span>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h3>Tech Stack</h3>
+                            <div class="tag-list">
+                                <span class="tag">Unity</span>
+                                <span class="tag">C#</span>
+                                <span class="tag">Visual Studio</span>
+                                <span class="tag">WebGL Build</span>
+                                <span class="tag">Git / GitHub</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="learned-section">
+                        <h3>What I Learned</h3>
+                        <p>
+                            While building this project, I learned how to implement physics-based player movement, manage game states such as start, play, and game over, spawn obstacles dynamically, and track player score. I also learned how to export a Unity project to WebGL and deploy it to GitHub Pages for online play.
+                        </p>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="#" class="btn btn-primary">
+                            <span>Play Demo</span>
+                            <span>→</span>
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <span>View Source</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Space for future projects -->
+            <!-- Add more project-card divs here as you complete new games -->
+            
+        </section>
+
+        <footer>
+            <p>© 2025 Your Name. Designed & developed with attention to detail.</p>
+        </footer>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(3)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
